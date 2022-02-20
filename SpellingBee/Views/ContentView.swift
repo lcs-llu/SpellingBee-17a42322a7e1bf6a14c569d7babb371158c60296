@@ -12,6 +12,9 @@ struct ContentView: View {
     
     // MARK: Stored properties
     @State var currentItem = itemsToSpell.randomElement()!
+    @State var inputGiven  = ""
+    @State var answerChecked = false
+    @State var answerCorrect = false
     
     // MARK: Computed properties
     var body: some View {
@@ -40,6 +43,62 @@ struct ContentView: View {
                     synthesizer.speak(utterance)
                     
                 }
+            
+            Divider()
+            
+            HStack {
+                ZStack {
+                    Image(systemName: "checkmark.circle")
+                        .foregroundColor(.green)
+                        .opacity(answerCorrect == true ? 1.0 : 0.0)
+                    
+                    Image(systemName: "x.square")
+                        .foregroundColor(.red)
+                        .opacity(answerChecked == true && answerCorrect == false ? 1.0 : 0.0)
+                }
+                
+                Spacer()
+                
+                TextField("",
+                          text: $inputGiven)
+                    .autocapitalization(.none)
+                    .multilineTextAlignment(.center)
+            }
+            
+            ZStack {
+                
+                Button(action: {
+                    
+                    answerChecked = true
+                    
+                    if inputGiven == currentItem.word {
+                        answerCorrect = true
+                    } else {
+                        answerCorrect = false
+                    }
+                }, label: {
+                    Text("Check Answer")
+                })
+                    .padding()
+                    .buttonStyle(.bordered)
+                    .opacity(answerChecked == false ? 1.0 : 0.0)
+                
+                Button(action: {
+                    currentItem = itemsToSpell.randomElement()!
+                    answerChecked = false
+                    answerCorrect = false
+                    inputGiven = ""
+                }, label: {
+                    Text("New question")
+                })
+                    .padding()
+                    .buttonStyle(.bordered)
+                    .opacity(answerChecked == true ? 1.0 : 0.0)
+                
+                Spacer()
+                
+            }
+            .padding()
             
         }
         
